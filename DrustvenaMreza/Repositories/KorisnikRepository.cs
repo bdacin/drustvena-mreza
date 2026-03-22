@@ -1,11 +1,12 @@
 ﻿using DrustvenaMreza.Models;
+using System;
 using System.Globalization;
 
 namespace DrustvenaMreza.Repositories
 {
     public class KorisnikRepository
     {
-        private const string filePath = "CSVs/korisnici.csv";
+        private static string filePath = Path.Combine(Directory.GetCurrentDirectory(), "CSVs", "korisnici.csv");
 
         public static Dictionary<int, Korisnik> Data;
 
@@ -32,12 +33,14 @@ namespace DrustvenaMreza.Repositories
                 string ime = attributes[2];
                 string prezime = attributes[3];
 
-                DateTime datum = DateTime.ParseExact(
-                    attributes[4],
-                    "dd-MM-yyyy",
-                    CultureInfo.InvariantCulture
-                );
+                DateTime datum;
 
+                if (!DateTime.TryParseExact(attributes[4], "dd-MM-yyyy",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out datum))
+                {
+                    datum = DateTime.Parse(attributes[4]);
+                }
                 Korisnik korisnik = new Korisnik(id, username, ime, prezime, datum);
 
                 Data[id] = korisnik;

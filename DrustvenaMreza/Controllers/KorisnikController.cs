@@ -6,46 +6,72 @@ namespace DrustvenaMreza.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class KorisnikController:ControllerBase
+    public class KorisnikController : ControllerBase
     {
+        // GET svi korisnici
         [HttpGet]
-        public ActionResult<List<Korisnik>>GetAll()
+        public ActionResult<List<Korisnik>> GetAll()
         {
             KorisnikRepository repo = new KorisnikRepository();
-            List<Korisnik>korisnici=KorisnikRepository.Data.Values.ToList();
+            List<Korisnik> korisnici = KorisnikRepository.Data.Values.ToList();
             return Ok(korisnici);
         }
-        //Get jedan korisnik
+
+        // GET jedan korisnik
         [HttpGet("{korisnikId}")]
         public ActionResult<Korisnik> GetById(int korisnikId)
         {
             KorisnikRepository repo = new KorisnikRepository();
+
             if (!KorisnikRepository.Data.ContainsKey(korisnikId))
             {
                 return NotFound();
             }
-            Korisnik korisnik=KorisnikRepository.Data[korisnikId];
-            return Ok(korisnik);
+
+            return Ok(KorisnikRepository.Data[korisnikId]);
         }
-        //Post 
+
+        // POST - dodavanje korisnika
         [HttpPost]
-        public ActionResult<Korisnik>Create(Korisnik korisnik)
-        {
-            KorisnikRepository repo=new KorisnikRepository();
-            KorisnikRepository.Data[korisnik.Id] = korisnik;
-            repo.Save();
-            return Ok(korisnik);
-        }
-        //PUT
-        [HttpPut("{korisnikId}")]
-        public ActionResult<Korisnik>Update(int korisnikId, Korisnik korisnik)
+        public ActionResult<Korisnik> Create(Korisnik korisnik)
         {
             KorisnikRepository repo = new KorisnikRepository();
-            if (!KorisnikRepository.Data.ContainsKey (korisnikId))
-            { return NotFound(); }
-            korisnik.Id= korisnikId;
-            KorisnikRepository.Data [korisnik.Id]= korisnik;
+
+            
+            int newId = 1;
+            if (KorisnikRepository.Data.Count > 0)
+            {
+                newId = KorisnikRepository.Data.Keys.Max() + 1;
+            }
+
+            korisnik.Id = newId;
+
+            
+            KorisnikRepository.Data[korisnik.Id] = korisnik;
+
+            
             repo.Save();
+
+            return Ok(korisnik);
+        }
+
+        // PUT - izmena korisnika
+        [HttpPut("{korisnikId}")]
+        public ActionResult<Korisnik> Update(int korisnikId, Korisnik korisnik)
+        {
+            KorisnikRepository repo = new KorisnikRepository();
+
+            if (!KorisnikRepository.Data.ContainsKey(korisnikId))
+            {
+                return NotFound();
+            }
+
+            korisnik.Id = korisnikId;
+
+            KorisnikRepository.Data[korisnik.Id] = korisnik;
+
+            repo.Save();
+
             return Ok(korisnik);
         }
     }

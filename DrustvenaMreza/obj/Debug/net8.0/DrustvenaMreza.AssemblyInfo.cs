@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DrustvenaMreza")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e9717db8f9587426de2e4406314966570569c526")]
 [assembly: System.Reflection.AssemblyProductAttribute("DrustvenaMreza")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DrustvenaMreza")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

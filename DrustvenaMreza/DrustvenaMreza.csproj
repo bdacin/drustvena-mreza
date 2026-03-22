@@ -14,4 +14,16 @@
     <Folder Include="CSVs\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="CSVs\clanstva.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CSVs\grupe.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CSVs\korisnici.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
