@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Korisnici</title>
+</head>
+<body>
+
+    <h1>Lista korisnika</h1>
+
+    <ul id="lista"></ul>
+
+    <script>
+        fetch("http://localhost:43691/api/users")
+            .then(response => response.json())
+            .then(data => {
+                let lista = document.getElementById("lista");
+
+                data.forEach(korisnik => {
+                    let li = document.createElement("li");
+                    li.textContent = korisnik.ime + " " + korisnik.prezime;
+                    lista.appendChild(li);
+                });
+            });
+    </script>
+
+</body>
+</html>
