@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Korisnik</title>
+</head>
+<body>
+
+<h1>Korisnik</h1>
+
+<input id="username" placeholder="Korisničko ime"><br>
+<input id="ime" placeholder="Ime"><br>
+<input id="prezime" placeholder="Prezime"><br>
+<input type="date" id="datum">
+
+<button onclick="sacuvaj()">Sačuvaj</button>
+
+<script>
+    let params = new URLSearchParams(window.location.search);
+    let korisnikId = params.get("id");
+
+    // ako postoji ID 
+    if (korisnikId) {
+        fetch(`http://localhost:43691/api/users/${korisnikId}`)
+            .then(res => res.json())
+            .then(k => {
+                document.getElementById("username").value = k.korisnickoIme;
+                document.getElementById("ime").value = k.ime;
+                document.getElementById("prezime").value = k.prezime;
+                document.getElementById("datum").value = k.datumRodjenja;
+            });
+    }
+
+    function sacuvaj() {
+        let korisnik = {
+            korisnickoIme: document.getElementById("username").value,
+            ime: document.getElementById("ime").value,
+            prezime: document.getElementById("prezime").value,
+            datumRodjenja: document.getElementById("datum").value
+        };
+
+        if (korisnikId) {
+            // PUT (update)
+            fetch(`http://localhost:43691/api/users/${korisnikId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(korisnik)
+            }).then(() => window.location.href = "index.html");
+        } 
+
+            fetch("http://localhost:43691/api/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(korisnik)
+            }).then(() => window.location.href = "index.html");
+        }
+</script>
+
+</body>
+</html>
