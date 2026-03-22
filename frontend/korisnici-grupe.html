@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Korisnici grupe</title>
+</head>
+<body>
+
+<h1>Korisnici grupe</h1>
+
+<ul id="lista"></ul>
+
+<script>
+    let params = new URLSearchParams(window.location.search);
+    let grupaId = params.get("id");
+
+    fetch(`http://localhost:43691/api/grupe/${grupaId}/korisnici`)
+        .then(res => res.json())
+        .then(data => {
+            let lista = document.getElementById("lista");
+
+            data.forEach(korisnik => {
+                let li = document.createElement("li");
+                li.textContent = korisnik.ime + " " + korisnik.prezime;
+                lista.appendChild(li);
+            });
+        });
+</script>
+
+</body>
+</html>

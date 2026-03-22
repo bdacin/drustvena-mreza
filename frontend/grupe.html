@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grupe</title>
+</head>
+<body>
+
+<h1>Grupe</h1>
+
+<ul id="grupe"></ul>
+
+<script>
+    
+    let grupe = [
+        { id: 11, naziv: "Administratori" },
+        { id: 12, naziv: "Korisnici" }
+    ];
+
+    let lista = document.getElementById("grupe");
+
+    grupe.forEach(g => {
+        let li = document.createElement("li");
+
+        li.innerHTML = `
+            ${g.naziv}
+            <button onclick="detalji(${g.id})">Detalji</button>
+        `;
+
+        lista.appendChild(li);
+    });
+
+    function detalji(id) {
+        window.location.href = "korisnici-grupe.html?id=" + id;
+    }
+</script>
+
+</body>
+</html>
