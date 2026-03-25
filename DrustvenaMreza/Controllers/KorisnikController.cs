@@ -1,7 +1,6 @@
 ﻿using DrustvenaMreza.Models;
 using DrustvenaMreza.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
 
 namespace DrustvenaMreza.Controllers
 {
@@ -9,124 +8,29 @@ namespace DrustvenaMreza.Controllers
     [ApiController]
     public class KorisnikController : ControllerBase
     {
-        private readonly string _connectionString = "Data Source=Data/drustvena_mreza.db";
+        private KorisnikDBRepository _repo;
 
-        // GET svi korisnici (IZ BAZE)
+        public KorisnikController()
+        {
+            _repo = new KorisnikDBRepository();
+        }
+
+        // GET svi korisnici (DB)
         [HttpGet]
         public ActionResult<List<Korisnik>> GetAll()
         {
-            try
-            {
-                var korisnici = GetAllFromDatabase();
-                return Ok(korisnici);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Greška: {ex.Message}");
-            }
+            var korisnici = _repo.GetAll();
+            return Ok(korisnici);
         }
 
-        private List<Korisnik> GetAllFromDatabase()
-        {
-            var korisnici = new List<Korisnik>();
-
-            try
-            {
-                using SqliteConnection connection = new SqliteConnection(_connectionString);
-                connection.Open();
-
-                string query = "SELECT Id, KorisnickoIme, Ime, Prezime, DatumRodjenja FROM Korisnici";
-
-                using SqliteCommand command = new SqliteCommand(query, connection);
-                using SqliteDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    try
-                    {
-                        var korisnik = new Korisnik(
-                            Convert.ToInt32(reader["Id"]),
-                            reader["KorisnickoIme"].ToString(),
-                            reader["Ime"].ToString(),
-                            reader["Prezime"].ToString(),
-                            DateTime.Parse(reader["DatumRodjenja"].ToString())
-                        );
-
-                        korisnici.Add(korisnik);
-                    }
-                    catch (FormatException ex)
-                    {
-                        Console.WriteLine($"Greška u formatu podataka: {ex.Message}");
-                    }
-                }
-            }
-            catch (SqliteException ex)
-            {
-                Console.WriteLine($"Greška pri radu sa bazom: {ex.Message}");
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Greška sa konekcijom: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Neočekivana greška: {ex.Message}");
-            }
-
-            return korisnici;
-        }
-
-        // GET jedan korisnik (CSV)
+        // GET jedan korisnik (DB)
         [HttpGet("{korisnikId}")]
         public ActionResult<Korisnik> GetById(int korisnikId)
         {
-            KorisnikRepository repo = new KorisnikRepository();
+            var korisnik = _repo.GetById(korisnikId);
 
-            if (!KorisnikRepository.Data.ContainsKey(korisnikId))
-            {
+            if (korisnik == null)
                 return NotFound();
-            }
-
-            return Ok(KorisnikRepository.Data[korisnikId]);
-        }
-
-        // POST - dodavanje korisnika (CSV)
-        [HttpPost]
-        public ActionResult<Korisnik> Create(Korisnik korisnik)
-        {
-            KorisnikRepository repo = new KorisnikRepository();
-
-            int newId = 1;
-            if (KorisnikRepository.Data.Count > 0)
-            {
-                newId = KorisnikRepository.Data.Keys.Max() + 1;
-            }
-
-            korisnik.Id = newId;
-
-            KorisnikRepository.Data[korisnik.Id] = korisnik;
-
-            repo.Save();
-
-            return Ok(korisnik);
-        }
-
-        // PUT - izmena korisnika (CSV)
-        [HttpPut("{korisnikId}")]
-        public ActionResult<Korisnik> Update(int korisnikId, Korisnik korisnik)
-        {
-            KorisnikRepository repo = new KorisnikRepository();
-
-            if (!KorisnikRepository.Data.ContainsKey(korisnikId))
-            {
-                return NotFound();
-            }
-
-            korisnik.Id = korisnikId;
-
-            KorisnikRepository.Data[korisnik.Id] = korisnik;
-
-            repo.Save();
 
             return Ok(korisnik);
         }
