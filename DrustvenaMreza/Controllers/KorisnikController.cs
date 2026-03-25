@@ -15,15 +15,12 @@ namespace DrustvenaMreza.Controllers
             _repo = new KorisnikDBRepository();
         }
 
-        // GET svi korisnici (DB)
         [HttpGet]
         public ActionResult<List<Korisnik>> GetAll()
         {
-            var korisnici = _repo.GetAll();
-            return Ok(korisnici);
+            return Ok(_repo.GetAll());
         }
 
-        // GET jedan korisnik (DB)
         [HttpGet("{korisnikId}")]
         public ActionResult<Korisnik> GetById(int korisnikId)
         {
@@ -33,6 +30,41 @@ namespace DrustvenaMreza.Controllers
                 return NotFound();
 
             return Ok(korisnik);
+        }
+
+        [HttpPost]
+        public ActionResult<Korisnik> Create(Korisnik korisnik)
+        {
+            var novi = _repo.Create(korisnik);
+
+            if (novi == null)
+                return StatusCode(500);
+
+            return Ok(novi);
+        }
+
+        [HttpPut("{korisnikId}")]
+        public ActionResult<Korisnik> Update(int korisnikId, Korisnik korisnik)
+        {
+            korisnik.Id = korisnikId;
+
+            bool success = _repo.Update(korisnik);
+
+            if (!success)
+                return NotFound();
+
+            return Ok(korisnik);
+        }
+
+        [HttpDelete("{korisnikId}")]
+        public IActionResult Delete(int korisnikId)
+        {
+            bool success = _repo.Delete(korisnikId);
+
+            if (!success)
+                return NotFound();
+
+            return Ok();
         }
     }
 }
