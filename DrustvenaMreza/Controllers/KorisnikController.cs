@@ -16,11 +16,18 @@ namespace DrustvenaMreza.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Korisnik>> GetAll()
+        public ActionResult GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
         {
             try
             {
-                return Ok(_repo.GetAll());
+                var data = _repo.GetAll(page, pageSize);
+                var total = _repo.CountAll();
+
+                return Ok(new
+                {
+                    data = data,
+                    total = total
+                });
             }
             catch (Exception ex)
             {

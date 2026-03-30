@@ -12,7 +12,7 @@ namespace DrustvenaMreza.Repositories
             _connectionString = configuration.GetConnectionString("SQLiteConnection");
         }
 
-        public List<Korisnik> GetAll()
+        public List<Korisnik> GetAll(int page, int pageSize)
         {
             var korisnici = new List<Korisnik>();
 
@@ -21,9 +21,16 @@ namespace DrustvenaMreza.Repositories
                 using SqliteConnection connection = new SqliteConnection(_connectionString);
                 connection.Open();
 
-                string query = "SELECT Id, KorisnickoIme, Ime, Prezime, DatumRodjenja FROM Korisnici";
+                int offset = (page - 1) * pageSize;
+
+                string query = @"SELECT Id, KorisnickoIme, Ime, Prezime, DatumRodjenja 
+                                 FROM Korisnici 
+                                 LIMIT @PageSize OFFSET @Offset";
 
                 using SqliteCommand command = new SqliteCommand(query, connection);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
+                command.Parameters.AddWithValue("@Offset", offset);
+
                 using SqliteDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -42,10 +49,30 @@ namespace DrustvenaMreza.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Greška: {ex.Message}");
-                throw; 
+                throw;
             }
 
             return korisnici;
+        }
+
+        public int CountAll()
+        {
+            try
+            {
+                using SqliteConnection connection = new SqliteConnection(_connectionString);
+                connection.Open();
+
+                string query = "SELECT COUNT(*) FROM Korisnici";
+
+                using SqliteCommand command = new SqliteCommand(query, connection);
+
+                return Convert.ToInt32(command.ExecuteScalar());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Greška: {ex.Message}");
+                throw;
+            }
         }
 
         public Korisnik GetById(int id)
