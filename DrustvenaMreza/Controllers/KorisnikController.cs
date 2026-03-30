@@ -10,61 +10,92 @@ namespace DrustvenaMreza.Controllers
     {
         private KorisnikDBRepository _repo;
 
-        public KorisnikController()
+        public KorisnikController(IConfiguration configuration)
         {
-            _repo = new KorisnikDBRepository();
+            _repo = new KorisnikDBRepository(configuration);
         }
 
         [HttpGet]
         public ActionResult<List<Korisnik>> GetAll()
         {
-            return Ok(_repo.GetAll());
+            try
+            {
+                return Ok(_repo.GetAll());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
         }
 
         [HttpGet("{korisnikId}")]
         public ActionResult<Korisnik> GetById(int korisnikId)
         {
-            var korisnik = _repo.GetById(korisnikId);
+            try
+            {
+                var korisnik = _repo.GetById(korisnikId);
 
-            if (korisnik == null)
-                return NotFound();
+                if (korisnik == null)
+                    return NotFound();
 
-            return Ok(korisnik);
+                return Ok(korisnik);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
         }
 
         [HttpPost]
         public ActionResult<Korisnik> Create(Korisnik korisnik)
         {
-            var novi = _repo.Create(korisnik);
-
-            if (novi == null)
-                return StatusCode(500);
-
-            return Ok(novi);
+            try
+            {
+                var novi = _repo.Create(korisnik);
+                return Ok(novi);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
         }
 
         [HttpPut("{korisnikId}")]
         public ActionResult<Korisnik> Update(int korisnikId, Korisnik korisnik)
         {
-            korisnik.Id = korisnikId;
+            try
+            {
+                korisnik.Id = korisnikId;
 
-            bool success = _repo.Update(korisnik);
+                bool success = _repo.Update(korisnik);
 
-            if (!success)
-                return NotFound();
+                if (!success)
+                    return NotFound();
 
-            return Ok(korisnik);
+                return Ok(korisnik);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
         }
 
         [HttpDelete("{korisnikId}")]
         public IActionResult Delete(int korisnikId)
         {
-            bool success = _repo.Delete(korisnikId);
+            try
+            {
+                bool success = _repo.Delete(korisnikId);
 
-            if (!success)
-                return NotFound();
+                if (!success)
+                    return NotFound();
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
         }
     }
 }

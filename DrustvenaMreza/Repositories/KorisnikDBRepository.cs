@@ -5,7 +5,12 @@ namespace DrustvenaMreza.Repositories
 {
     public class KorisnikDBRepository
     {
-        private readonly string _connectionString = "Data Source=Data/drustvena_mreza.db";
+        private readonly string _connectionString;
+
+        public KorisnikDBRepository(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetConnectionString("SQLiteConnection");
+        }
 
         public List<Korisnik> GetAll()
         {
@@ -37,6 +42,7 @@ namespace DrustvenaMreza.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Greška: {ex.Message}");
+                throw; 
             }
 
             return korisnici;
@@ -70,6 +76,7 @@ namespace DrustvenaMreza.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Greška: {ex.Message}");
+                throw;
             }
 
             return null;
@@ -101,7 +108,7 @@ namespace DrustvenaMreza.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Greška: {ex.Message}");
-                return null;
+                throw;
             }
         }
 
@@ -134,7 +141,7 @@ namespace DrustvenaMreza.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Greška: {ex.Message}");
-                return false;
+                throw;
             }
         }
 
@@ -157,7 +164,7 @@ namespace DrustvenaMreza.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Greška: {ex.Message}");
-                return false;
+                throw;
             }
         }
     }
