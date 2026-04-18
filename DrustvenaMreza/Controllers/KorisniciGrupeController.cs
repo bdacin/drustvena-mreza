@@ -8,23 +8,68 @@ namespace DrustvenaMreza.Controllers
     [ApiController]
     public class KorisniciGrupeController : ControllerBase
     {
-        private KorisnikRepository korisnikRepository = new KorisnikRepository();
-        private ClanstvoRepository clanstvoRepository = new ClanstvoRepository();
+        private readonly ClanstvoRepository _repo;
 
+        public KorisniciGrupeController(IConfiguration configuration)
+        {
+            _repo = new ClanstvoRepository(configuration);
+        }
+
+        //  GET članovi grupe
         [HttpGet]
         public ActionResult<List<Korisnik>> GetKorisniciGrupe(int grupaId)
         {
-            List<Korisnik> korisniciGrupe = new List<Korisnik>();
-
-            foreach (Clanstvo c in ClanstvoRepository.Data.Values)
+            try
             {
-                if (c.GrupaId == grupaId)
-                {
-                    korisniciGrupe.Add(KorisnikRepository.Data[c.KorisnikId]);
-                }
-            }
+                var grupa = _repo.GetGroupWithMembers(grupaId);
 
-            return Ok(korisniciGrupe);
+                if (grupa == null)
+                    return NotFound();
+
+                return Ok(grupa.Clanovi);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
+        }
+
+        //  POST dodaj korisnika u grupu
+        [HttpPost("{korisnikId}")]
+        public IActionResult AddUser(int grupaId, int korisnikId)
+        {
+            try
+            {
+                bool success = _repo.AddUserToGroup(korisnikId, grupaId);
+
+                if (!success)
+                    return NotFound();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
+        }
+
+        //  DELETE izbaci korisnika iz grupe
+        [HttpDelete("{korisnikId}")]
+        public IActionResult RemoveUser(int grupaId, int korisnikId)
+        {
+            try
+            {
+                bool success = _repo.RemoveUserFromGroup(korisnikId, grupaId);
+
+                if (!success)
+                    return NotFound();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
         }
     }
 }
