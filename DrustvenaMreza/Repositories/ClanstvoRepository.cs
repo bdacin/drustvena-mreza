@@ -12,11 +12,13 @@ namespace DrustvenaMreza.Repositories
             _connectionString = configuration.GetConnectionString("SQLiteConnection");
         }
 
-        // GRUPA + ČLANOVI
+        //  GRUPA + ČLANOVI
         public Grupa GetGroupWithMembers(int groupId)
         {
-            var grupa = new Grupa();
-            grupa.Clanovi = new List<Korisnik>();
+            var grupa = new Grupa
+            {
+                Clanovi = new List<Korisnik>()
+            };
 
             try
             {
@@ -36,10 +38,12 @@ namespace DrustvenaMreza.Repositories
 
                 grupa.Id = Convert.ToInt32(groupReader["Id"]);
                 grupa.Ime = groupReader["Name"].ToString();
+                grupa.DatumOsnivanja = DateTime.Parse(groupReader["CreationDate"].ToString()); // ✅ DODATO
 
                 groupReader.Close();
 
                 // 2. uzmi članove (JOIN)
+               
                 string membersQuery = @"
                     SELECT u.Id, u.KorisnickoIme, u.Ime, u.Prezime, u.DatumRodjenja
                     FROM GroupMemberships gm
